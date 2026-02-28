@@ -12,8 +12,8 @@ class ChestResNet18(nn.Module):
         super(ChestResNet18, self).__init__()
         
         if pretrained:
-            # 采用预训练权重（迁移学习）。相当于这个模型已经看过了上百万张猫狗飞机的图片，
-            # 它已经学会了如何提取“边缘、纹理、轮廓”，我们只需要让它适应 X 光片即可。
+            # 采用预训练权重（迁移学习）。
+            # 我们只需要让它适应 X 光片即可。
             weights = models.ResNet18_Weights.DEFAULT
             self.resnet = models.resnet18(weights=weights)
             print("=> 已加载 ResNet-18 预训练权重！(Transfer Learning 开启)")
@@ -22,11 +22,8 @@ class ChestResNet18(nn.Module):
             self.resnet = models.resnet18(weights=None)
             print("=> 未加载预训练权重，模型将从头开始训练 (Training from scratch)。")
 
-        # 2. 改造“分类头” (Head)
-        # 官方的 ResNet18 是为 ImageNet 设计的，最后输出是 1000 个类别。
-        # 我们需要把它截断，换成我们自己的 2分类。
-        
-        # 获取原模型全连接层 (fc) 的输入特征数 (ResNet18 这里固定是 512)
+        # 2. 改造“分类头”         
+        # 获取原模型全连接层 (fc) 的输入特征数
         in_features = self.resnet.fc.in_features 
         
         # 替换官方的全连接层。
